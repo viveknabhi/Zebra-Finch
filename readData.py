@@ -3,6 +3,7 @@ from scikits.talkbox.features import mfcc
 import matplotlib.pyplot as plt
 import pickle
 import os
+import numpy as np
 
 
 def findFileNames():
@@ -28,10 +29,20 @@ def pickleData(data,writeFile):
 	pickle.dump(data,open(writeFile,"wb"))
 
 
-def loadDataFromWav():
+def loadDataFromWav(fileName):
 	files = findFileNames()
 	dataDict = extractMFCC(files)
-	pickleData(dataDict,"mfccDump.p")
+	dataDict = padZeroes(dataDict)
+	pickleData(dataDict,fileName)
+	return dataDict
+
+def padZeroes(dataDict):
+	maxLen = max([ceps.shape[0] for ceps in dataDict.values()])
+	for key in dataDict:
+		rows = maxLen - dataDict[key].shape[0]
+		pad = np.zeros((rows,13))
+		dataDict[key] = np.vstack((dataDict[key], pad))
+
 	return dataDict
 
 
@@ -45,5 +56,9 @@ def plotCeps(ceps):
 
 
 if __name__ == "__main__":
-	dataDict = loadDataFromPickle("mfccDump.p")
-	print len(dataDict)
+	#To load the data again from the files
+	#dataDict = loadDataFromWav("mfccDumpPadded.p")
+	dataDict = loadDataFromPickle("mfccDumpPadded.p")
+	for key in dataDict:
+		print dataDict[key].shape
+		#raw_input()
