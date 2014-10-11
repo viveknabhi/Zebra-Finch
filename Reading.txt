@@ -3,10 +3,7 @@ http://ml.sun.ac.za/wordpress/wp-content/uploads/2011/08/HReikeras-SciPy-2010.pd
 http://stats.stackexchange.com/questions/26100/how-to-run-k-means-clustering-on-data-points-of-varying-dimensionality
 http://www.researchgate.net/post/Mixture_Markov_Model_for_clustering_of_varying_length_sequences2
 
-<<<<<<< HEAD
-
 http://www.ee.columbia.edu/~dpwe/pubs/JenECJ07-gmmdist.pdf
 =======
 http://en.wikipedia.org/wiki/Dynamic_time_warping - we need to use this to cluster data of varying dimensionality
 http://mlpy.sourceforge.net/ - Another library we could check out - machine learning python
->>>>>>> d2216471e1f91ca0e49c75e4aa57e60992972e1e
