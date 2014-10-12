@@ -23,9 +23,8 @@ def doPaddedKmeans():
 		listData.append(data[item].flatten())
 
 	listData = np.array(listData)
-	print listData.shape
 	for i in xrange(4,10,1):
-		listData = PCA(n_components=2).fit_transform(listData)
+		listData = PCA(n_components=i).fit_transform(listData)
 		kmeans = KMeans(init='k-means++', n_clusters=i+1, n_init=1)
 		euclidian_k_means(kmeans, 'kmeans++', listData)
 
@@ -33,13 +32,13 @@ def doPaddedKmeans():
 def doAvgCoeffKmeans():
 	data = readData.loadDataFromPickle('mfccDump.p')
 	listData = readData.getAveragedCepstralCoefficients(data)
-	print listData.shape
 	for i in xrange(4,10,1):
-		listData = PCA(n_components=2).fit_transform(listData)
+		listData = PCA(n_components=i).fit_transform(listData)
 		kmeans = KMeans(init='k-means++', n_clusters=i+1, n_init=1)
 		euclidian_k_means(kmeans, 'kmeans++', listData)
 
 
 
 doPaddedKmeans()
-`
+print 'NEW'
+doAvgCoeffKmeans()
