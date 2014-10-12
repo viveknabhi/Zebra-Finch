@@ -7,3 +7,9 @@ http://www.ee.columbia.edu/~dpwe/pubs/JenECJ07-gmmdist.pdf
 =======
 http://en.wikipedia.org/wiki/Dynamic_time_warping - we need to use this to cluster data of varying dimensionality
 http://mlpy.sourceforge.net/ - Another library we could check out - machine learning python
+
+http://en.wikipedia.org/wiki/Mel-frequency_cepstrum - Check to improve quality of MFCC's
+
+http://www.practicalcryptography.com/miscellaneous/machine-learning/guide-mel-frequency-cepstral-coefficients-mfccs/ - MFCC's explained
+
+http://www.sersc.org/journals/IJSIP/vol5_no1/10.pdf - Page 138

@@ -33,6 +33,7 @@ def loadDataFromWav(fileName):
 	files = findFileNames()
 	dataDict = extractMFCC(files)
 	dataDict = padZeroes(dataDict)
+	#dataDict = padNans(dataDict)
 	pickleData(dataDict,fileName)
 	return dataDict
 
@@ -46,6 +47,16 @@ def padZeroes(dataDict):
 	return dataDict
 
 
+def padNans(dataDict):
+	maxLen = max([ceps.shape[0] for ceps in dataDict.values()])
+	for key in dataDict:
+		rows = maxLen - dataDict[key].shape[0]
+		pad = np.empty((rows,13))
+		pad[:] = np.NAN
+		dataDict[key] = np.vstack((dataDict[key], pad))
+
+	return dataDict
+
 def loadDataFromPickle(fileName):
 	data = pickle.load(open(fileName,"rb"))
 	return data
@@ -57,8 +68,8 @@ def plotCeps(ceps):
 
 if __name__ == "__main__":
 	#To load the data again from the files
-	#dataDict = loadDataFromWav("mfccDumpPadded.p")
-	dataDict = loadDataFromPickle("mfccDumpPadded.p")
-	for key in dataDict:
-		print dataDict[key].shape
+	dataDict = loadDataFromWav("mfccDumpPadded.p")
+	#dataDict = loadDataFromPickle("mfccDumpPadded.p")
+	# for key in dataDict:
+	# 	print dataDict[key].shape
 		#raw_input()
