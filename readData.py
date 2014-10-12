@@ -65,6 +65,14 @@ def plotCeps(ceps):
 	plt.plot(ceps)
 	plt.show()
 
+def getAveragedCepstralCoefficients(dataDict):
+	listData = []
+	for key in dataDict:
+		listData.append(np.mean(dataDict[key],axis=0))
+
+	return np.array(listData)
+
+
 
 if __name__ == "__main__":
 	#To load the data again from the files
