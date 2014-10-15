@@ -7,38 +7,10 @@ from time import time
 import sklearn.metrics as metrics
 import accuracy
 
-def estimate_GMM(estimator, name, data):
+def estimate_GMM(data, clusters, metric):
     t0 = time()
-    estimator.fit(data)
-    labels = estimator.predict(data)
-    print len(labels)
-    print 'name', 'time' ,'silhouette_score' 
-    print('% 9s   %.2fs   %.3f '
-          % (name, (time() - t0),accuracy.getAccuracy(data,labels,len(data),'cosine')))
-
-
-
-def doPaddedGMM():
-	data = readData.loadDataFromPickle('mfccDumpPadded.p')
-	listData = []
-	for item in data:
-		listData.append(data[item].flatten())
-
-	listData = np.array(listData)
-	for i in xrange(4,10,1):
-		listData = PCA(n_components=i).fit_transform(listData)
-		gmm = GMM(n_components=i,n_iter = 5,n_init =1)
-		estimate_GMM(gmm, 'gmm', listData)
-
-
-def doAvgCoeffGMM():
-	data = readData.loadDataFromPickle('mfccDump.p')
-	listData = readData.getAveragedCepstralCoefficients(data)
-	for i in xrange(4,10,1):
-		listData = PCA(n_components=i).fit_transform(listData)
-		gmm = GMM(n_components=i,n_iter = 5,n_init =1)
-		estimate_GMM(gmm, 'gmm', listData)
-
-
-doPaddedGMM()
-doAvgCoeffGMM()
+    model = GMM(n_components=clusters,n_iter = 5,n_init =5)
+    model.fit(data)
+    labels = model.predict(data)
+    t1 = time()
+    return ('EM',clusters,accuracy.getAccuracy(data,labels,len(data),metric),t1-t0)

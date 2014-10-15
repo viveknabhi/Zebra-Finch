@@ -1,44 +1,71 @@
-import readData
 import numpy as np
 from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
 from time import time
-import sklearn.metrics as metrics
 import accuracy
+import mlpy
+import random
+import math
 
 
-def euclidian_k_means(estimator, name, data):
+def euclidian_k_means(data, clusters, metric):
     t0 = time()
-    estimator.fit(data)
-    print 'name', 'time' ,'silhouette_score' 
-    print('% 9s   %.2fs    %i   %.3f '
-          % (name, (time() - t0), estimator.inertia_,accuracy.getAccuracy(data,estimator.labels_,len(data),'euclidean')))
+    model = KMeans(init='k-means++', n_clusters=clusters, n_init=1)
+    model.fit(data)
+    t1 = time()
+    return ('Kmeans', clusters, accuracy.getAccuracy(data,model.labels_,len(data),'euclidean'),t1-t0)
 
 
-
-def doPaddedKmeans():
-	data = readData.loadDataFromPickle('mfccDumpPadded.p')
-	listData = []
-	for item in data:
-		listData.append(data[item].flatten())
-
-	listData = np.array(listData)
-	for i in xrange(4,10,1):
-		listData = PCA(n_components=i).fit_transform(listData)
-		kmeans = KMeans(init='k-means++', n_clusters=i+1, n_init=1)
-		euclidian_k_means(kmeans, 'kmeans++', listData)
-
-
-def doAvgCoeffKmeans():
-	data = readData.loadDataFromPickle('mfccDump.p')
-	listData = readData.getAveragedCepstralCoefficients(data)
-	for i in xrange(4,10,1):
-		listData = PCA(n_components=i).fit_transform(listData)
-		kmeans = KMeans(init='k-means++', n_clusters=i+1, n_init=1)
-		euclidian_k_means(kmeans, 'kmeans++', listData)
+def LB_Keogh(s1,s2,r):
+    LB_sum=0
+    for ind,i in enumerate(s1):
+ 
+        lower_bound=min(s2[(ind-r if ind-r>=0 else 0):(ind+r)])
+        upper_bound=max(s2[(ind-r if ind-r>=0 else 0):(ind+r)])
+ 
+        if i>upper_bound:
+            LB_sum=LB_sum+(i-upper_bound)**2
+        elif i<lower_bound:
+            LB_sum=LB_sum+(i-lower_bound)**2
+ 
+    return math.sqrt(LB_sum)
 
 
+def dtw_k_means(data,num_clust,metric):
+    t0 = time()
+    centroids=random.sample(data,num_clust)
+    counter=0
+    for n in range(50):
+        counter+=1
+        #print counter
+        assignments={}
+        #assign data points to clusters
+        for ind,i in enumerate(data):
+            min_dist=float('inf')
+            closest_clust=None
+            for c_ind,j in enumerate(centroids):
+                if LB_Keogh(i,j,5)<min_dist:
+                    cur_dist=mlpy.dtw_std(i,j,dist_only=True)
+                    if cur_dist<min_dist:
+                        min_dist=cur_dist
+                        closest_clust=c_ind
+            if closest_clust in assignments:
+                assignments[closest_clust].append(ind)
+            else:
+                assignments[closest_clust]=[]
+ 
+        #recalculate centroids of clusters
+        for key in assignments:
+            clust_sum=0
+            for k in assignments[key]:
+                clust_sum=clust_sum+data[k]
+            centroids[key]=[m/len(assignments[key]) for m in clust_sum]
 
-doPaddedKmeans()
-print 'NEW'
-doAvgCoeffKmeans()
+    labels = [0] * len(data)
+    for key in assignments:
+    	for value in assignments[key]:
+    		labels[value] = key
+
+    t1 = time()
+
+    labels = np.array(labels)
+    return ('Kmeans DTW', len(assignments.keys()), accuracy.getAccuracy(data,labels,len(data),'euclidean'),t1-t0)
