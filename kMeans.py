@@ -9,7 +9,7 @@ import math
 
 def euclidian_k_means(data, clusters, metric):
     t0 = time()
-    model = KMeans(init='k-means++', n_clusters=clusters, n_init=1)
+    model = KMeans(init='k-means++', n_clusters=clusters, n_init=5)
     model.fit(data)
     t1 = time()
     return ('Kmeans', clusters, accuracy.getAccuracy(data,model.labels_,len(data),'euclidean'),t1-t0)

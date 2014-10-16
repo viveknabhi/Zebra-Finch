@@ -20,5 +20,4 @@ def mean_shift(data,metric):
     labels_unique = np.unique(labels)
     n_clusters_ = len(labels_unique)
 
-    return ('Mean Shift',score,n_clusters_)
-    
+    return ('Mean Shift',n_clusters_,score,t1-t0)
